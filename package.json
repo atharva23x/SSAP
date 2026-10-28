@@ -1,0 +1,15 @@
+{
+  "name": "smart-student-portal",
+  "version": "1.0.0",
+  "description": "Smart Student Assistance Portal (SSAP)",
+  "main": "backend/src/server.js",
+  "scripts": {
+    "start": "node backend/src/server.js",
+    "build": "npm --prefix backend install",
+    "postinstall": "npm --prefix backend install",
+    "dev": "npm --prefix backend run dev"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

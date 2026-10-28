@@ -43,9 +43,17 @@ app.use('/uploads', express.static(UPLOAD_DIR));
 app.use(i18n);
 
 // Health check
-app.get('/api/health', (req, res) =>
-  res.json({ success: true, status: 'ok', env: env.NODE_ENV, time: new Date().toISOString() })
-);
+app.get('/api/health', (req, res) => {
+  const mongoose = require('mongoose');
+  const dbConnected = mongoose.connection.readyState === 1;
+  res.json({
+    success: true,
+    status: dbConnected ? 'ok' : 'degraded',
+    database: dbConnected ? 'connected' : 'disconnected',
+    env: env.NODE_ENV,
+    time: new Date().toISOString()
+  });
+});
 
 // Rate limit everything under /api (except health)
 app.use('/api', (req, res, next) => {

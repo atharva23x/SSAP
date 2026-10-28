@@ -13,3 +13,5 @@ frontend/dist/
 backend/uploads/
 tmp/
 .mongo-data/
+
+.vercel

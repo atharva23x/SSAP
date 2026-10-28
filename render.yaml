@@ -16,8 +16,8 @@ services:
     region: singapore
     plan: free
     rootDir: .            # repo root so backend/ AND frontend/ are both available
-    buildCommand: npm install --prefix backend
-    startCommand: npm start --prefix backend
+    buildCommand: npm run build
+    startCommand: npm start
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
