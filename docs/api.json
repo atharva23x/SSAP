@@ -1,0 +1,113 @@
+{
+  "info": {
+    "name": "Smart Student Assistance Portal API",
+    "description": "Express + MongoDB API for the SSAP multilingual student assistance platform. Set `baseUrl` (default http://localhost:5000). Auth uses httpOnly cookies — run login first; the JWT is also returned for Bearer use.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000" }
+  ],
+  "item": [
+    {
+      "name": "Health & i18n",
+      "item": [
+        { "name": "Health", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/health" } } },
+        { "name": "English bundle", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/i18n/en" } } },
+        { "name": "Hindi bundle", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/i18n/hi" } } }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Test Student\",\n  \"email\": \"test@example.com\",\n  \"password\": \"secret123\",\n  \"phone\": \"9876543210\",\n  \"preferredLanguage\": \"hi\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/auth/register" }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": { "exec": ["pm.collectionVariables.set('accessToken', pm.response.json().accessToken);"], "type": "text/javascript" }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"demo@student.in\",\n  \"password\": \"demo123\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/auth/login" }
+          }
+        },
+        { "name": "Me", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }] }, "url": { "raw": "{{baseUrl}}/api/auth/me" } } },
+        { "name": "Refresh", "request": { "method": "POST", "url": { "raw": "{{baseUrl}}/api/auth/refresh" } } },
+        { "name": "Logout", "request": { "method": "POST", "url": { "raw": "{{baseUrl}}/api/auth/logout" } } }
+      ]
+    },
+    {
+      "name": "Schemes",
+      "item": [
+        { "name": "List schemes", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/schemes?state=Maharashtra&lang=hi", "query": [{ "key": "state", "value": "Maharashtra" }, { "key": "lang", "value": "hi" }] } } },
+        { "name": "Match (eligibility engine)", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/schemes/match" } } },
+        { "name": "Get scheme", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/schemes/SCHEME_ID" } } },
+        { "name": "Save / toggle bookmark", "request": { "method": "POST", "url": { "raw": "{{baseUrl}}/api/schemes/SCHEME_ID/save" } } }
+      ]
+    },
+    {
+      "name": "Academic",
+      "item": [
+        { "name": "List exams", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/exams?stream=NEET" } } },
+        { "name": "Get exam", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/exams/EXAM_ID" } } },
+        { "name": "List competitions", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/competitions?status=upcoming" } } },
+        { "name": "List materials", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/materials?subject=Physics&type=notes" } } }
+      ]
+    },
+    {
+      "name": "Offices",
+      "item": [
+        { "name": "Nearby", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/offices/nearby?lat=18.52&lng=73.85&radius=10", "query": [{ "key": "lat", "value": "18.52" }, { "key": "lng", "value": "73.85" }, { "key": "radius", "value": "10" }] } } },
+        { "name": "By state/service", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/offices?state=Maharashtra&service=Income Certificate" } } }
+      ]
+    },
+    {
+      "name": "Documents",
+      "item": [
+        { "name": "Gap for scheme", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/documents/gap?schemeId=SCHEME_ID" } } },
+        { "name": "Guide by docType", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/documents/guide/Income%20Certificate" } } },
+        { "name": "Mark obtained", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"docType\": \"Domicile Certificate\"\n}" }, "url": { "raw": "{{baseUrl}}/api/documents/mark" } } }
+      ]
+    },
+    {
+      "name": "AI Assistant",
+      "item": [
+        { "name": "Query", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"query\": \"Which scholarships can I get?\",\n  \"lang\": \"hi\"\n}" }, "url": { "raw": "{{baseUrl}}/api/ai/query" } } },
+        { "name": "Suggestions", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/ai/suggestions" } } },
+        { "name": "History", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/ai/history" } } }
+      ]
+    },
+    {
+      "name": "Notifications & Profile",
+      "item": [
+        { "name": "List notifications", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/notifications" } } },
+        { "name": "Mark read", "request": { "method": "PATCH", "url": { "raw": "{{baseUrl}}/api/notifications/NOTIF_ID/read" } } },
+        { "name": "Mark all read", "request": { "method": "PATCH", "url": { "raw": "{{baseUrl}}/api/notifications/read-all" } } },
+        { "name": "Update profile", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"state\": \"Maharashtra\",\n  \"category\": \"OBC\",\n  \"classLevel\": \"UG\",\n  \"annualIncome\": 150000\n}" }, "url": { "raw": "{{baseUrl}}/api/profile" } } },
+        { "name": "Saved items", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/profile/saved" } } }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        { "name": "Stats", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/admin/stats" } } },
+        { "name": "List users", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/admin/users" } } },
+        { "name": "Create scheme", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"New Scheme\",\n  \"provider\": \"Ministry\",\n  \"type\": \"central\",\n  \"state\": \"ALL\",\n  \"description\": \"...\",\n  \"deadline\": \"2026-12-31\"\n}" }, "url": { "raw": "{{baseUrl}}/api/admin/schemes" } } },
+        { "name": "Update scheme", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"description\": \"updated\"\n}" }, "url": { "raw": "{{baseUrl}}/api/admin/schemes/SCHEME_ID" } } },
+        { "name": "Delete scheme", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/admin/schemes/SCHEME_ID" } } }
+      ]
+    }
+  ]
+}

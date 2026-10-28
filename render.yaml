@@ -1,0 +1,38 @@
+version: "1"
+
+# Render blueprint — deploys the WHOLE app (backend API + static frontend)
+# as a SINGLE web service. The Express server serves frontend/ automatically.
+#
+# HOW TO DEPLOY (one time):
+#   1. Push this repo to GitHub.
+#   2. Render → New → Blueprint → pick this repo. It auto-reads this file.
+#   3. Create a free MongoDB Atlas database, copy its connection string.
+#   4. In Render, set MONGO_URI to that Atlas string (everything else is set).
+#   5. Deploy. Open the *.onrender.com URL — the full app loads there.
+services:
+  - type: web
+    name: ssap
+    runtime: node
+    region: singapore
+    plan: free
+    rootDir: .            # repo root so backend/ AND frontend/ are both available
+    buildCommand: npm install --prefix backend
+    startCommand: npm start --prefix backend
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGO_URI
+        sync: false          # ← set in Render dashboard: your MongoDB Atlas URI
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: CORS_ORIGIN
+        value: "*"           # same-origin deploy; loosen if you add a separate frontend
+      - key: COOKIE_SECURE
+        value: "true"
+      - key: CRON_ENABLED
+        value: "true"

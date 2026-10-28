@@ -1,0 +1,10 @@
+# Keep the Vercel deploy lean — only the frontend is served.
+backend/
+docs/
+scripts/
+.github/
+**/node_modules/
+*.md
+render.yaml
+.env.example
+.gitignore
