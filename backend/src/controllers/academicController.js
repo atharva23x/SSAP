@@ -30,7 +30,7 @@ const listExams = asyncHandler(async (req, res) => {
 const getExam = asyncHandler(async (req, res) => {
   const exam = await Exam.findById(req.params.id).lean();
   if (!exam) throw new ApiError(404, 'EXAM_NOT_FOUND');
-  const saved = (req.user.savedExams || []).some((s) => s.toString() === req.params.id);
+  const saved = (req.user.savedExams || []).some((s) => s && s.toString() === req.params.id);
   res.json({ success: true, data: { ...localizeDoc(exam, req.lang), saved } });
 });
 
@@ -38,8 +38,8 @@ const getExam = asyncHandler(async (req, res) => {
 const saveExam = asyncHandler(async (req, res) => {
   const id = req.params.id;
   const user = await User.findById(req.user._id);
-  const exists = user.savedExams.some((s) => s.toString() === id);
-  if (exists) user.savedExams = user.savedExams.filter((s) => s.toString() !== id);
+  const exists = (user.savedExams || []).some((s) => s && s.toString() === id);
+  if (exists) user.savedExams = (user.savedExams || []).filter((s) => s && s.toString() !== id);
   else user.savedExams.push(id);
   await user.save();
   res.json({ success: true, saved: !exists, savedExams: user.savedExams });

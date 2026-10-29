@@ -74,7 +74,9 @@ const getScheme = asyncHandler(async (req, res) => {
 
   const { evaluateScheme } = require('../utils/eligibility');
   const evaluation = evaluateScheme(req.user, scheme);
-  const saved = (req.user.savedSchemes || []).some((s) => s.toString() === req.params.id);
+  const saved = (req.user.savedSchemes || []).some(
+    (s) => s != null && s.toString() === req.params.id
+  );
 
   res.json({
     success: true,
@@ -92,9 +94,9 @@ const getScheme = asyncHandler(async (req, res) => {
 const saveScheme = asyncHandler(async (req, res) => {
   const id = req.params.id;
   const user = await User.findById(req.user._id);
-  const exists = user.savedSchemes.some((s) => s.toString() === id);
+  const exists = (user.savedSchemes || []).some((s) => s && s.toString() === id);
   if (exists) {
-    user.savedSchemes = user.savedSchemes.filter((s) => s.toString() !== id);
+    user.savedSchemes = (user.savedSchemes || []).filter((s) => s && s.toString() !== id);
   } else {
     user.savedSchemes.push(id);
   }

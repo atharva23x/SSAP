@@ -15,3 +15,9 @@ tmp/
 .mongo-data/
 
 .vercel
+
+# Local demo-recording artifacts (not part of the app)
+demo-video/
+.demo/
+SSAP_Explained_For_Mam.*
+package-lock.json
